@@ -1,0 +1,92 @@
+---
+title: "TidyTemplate"
+date: 2021-04-10
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+theme_set(theme_minimal())
+library(scales)
+library(skimr)
+```
+
+# Load the weekly Data
+
+Dowload the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2021-04-06")
+
+```
+
+# Initial Look
+
+```{r}
+names(tt)
+```
+```{r}
+skim(tt$forest)
+```
+
+```{r}
+skim(tt$forest_area)
+```
+
+
+```{r}
+skim(tt$brazil_loss)
+```
+
+```{r}
+skim(tt$soybean_use)
+```
+
+```{r}
+skim(tt$vegetable_oil)
+```
+
+# Forest Area
+
+- Make a Map of Forest Area
+- Make it Interactive (Changing the year)
+
+```{r}
+d <- tt$forest_area
+```
+
+```{r}
+library(maps)
+world_map <- map_data("world") %>% 
+  as_tibble()
+```
+
+```{r}
+d_filter <- d %>% 
+  inner_join(iso3166, by = c("code" = "a3")) %>% 
+  filter(year == 1990)
+
+```
+```{r}
+d_viz <- world_map %>% 
+  left_join(d_filter, by = c("region" = "mapname"))
+```
+
+```{r}
+d_viz %>% 
+  # filter(region != "Antarctica") %>% 
+  # filter(order == 1) %>
+  ggplot(aes(long, lat)) +
+  geom_polygon(aes(group = group, fill = forest_area)) + 
+  scale_fill_gradientn(colours = rev(rainbow(7)))+
+  coord_fixed() +
+  theme_void()
+```
+
