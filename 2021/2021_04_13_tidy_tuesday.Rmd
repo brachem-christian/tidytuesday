@@ -2,6 +2,8 @@
 title: "TidyTemplate"
 date: 2021-04-17
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 # TidyTuesday
@@ -62,7 +64,8 @@ Explore the data and process it into a nice format for plotting! Access each dat
 ```{r Wrangle}
 
 
-
+d <- tt$post_offices %>% 
+  filter(established > 500)
 ```
 
 
@@ -72,7 +75,11 @@ Using your processed dataset, create your unique visualization.
 
 ```{r Visualize}
 
-
+d %>% 
+  ggplot(aes(x = established)) + 
+  geom_histogram(aes(y = ..density..), 
+                 binwidth = 1) + 
+  scale_y_continuous(labels = scales::label_percent())
   
 ```
 
